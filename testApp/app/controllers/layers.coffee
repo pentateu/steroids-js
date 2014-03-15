@@ -122,8 +122,8 @@ class window.LayersController
       onSuccess: =>
         steroids.layers.replace view
   
-  @testReplaceWithAnimation
-    view = new steroids.views.WebView "/views/layers/index.html"
+  @testReplaceWithAnimation: ->
+    view = new steroids.views.WebView "/views/layers/pop.html"
     
     myAnimation = new steroids.Animation
       transition: "curlDown"
