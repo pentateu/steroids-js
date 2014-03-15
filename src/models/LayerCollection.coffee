@@ -71,6 +71,8 @@ class LayerCollection
       steroids.debug "steroids.layers.replace using new view"
       parameters.url = view.location
 
+    parameters.animation = options.animation
+
     steroids.nativeBridge.nativeCall
       method: "replaceLayers"
       parameters: parameters

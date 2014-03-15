@@ -121,7 +121,21 @@ class window.LayersController
     view.preload {},
       onSuccess: =>
         steroids.layers.replace view
-
+  
+  @testReplaceWithAnimation
+    view = new steroids.views.WebView "/views/layers/index.html"
+    
+    myAnimation = new steroids.Animation
+      transition: "curlDown"
+      duration: 1.2
+      curve: "linear"
+    
+    view.preload {},
+      onSuccess: =>
+        steroids.layers.replace 
+          view: view
+          animation: myAnimation
+  
   @testReplaceToRoot: ->
     view = new steroids.views.WebView {
       location: "/views/layers/index.html"
