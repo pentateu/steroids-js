@@ -136,6 +136,20 @@ class window.LayersController
           view: view
           animation: myAnimation
   
+  @testReplaceWithAnimationFlip: ->
+    view = new steroids.views.WebView "/views/layers/pop.html"
+    
+    myAnimation = new steroids.Animation
+      transition: "flipHorizontalFromLeft"
+      duration: 1.2
+      curve: "easeInOut"
+    
+    view.preload {},
+      onSuccess: =>
+        steroids.layers.replace 
+          view: view
+          animation: myAnimation
+  
   @testReplaceToRoot: ->
     view = new steroids.views.WebView {
       location: "/views/layers/index.html"
