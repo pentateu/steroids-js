@@ -21,7 +21,9 @@ class window.StatusbarController
     steroids.statusBar.show "light",
       onSuccess: -> alert "showed light"
       onFailure: -> alert "failed to show light"
-  
+
   @testOnTap: ->
-    steroids.statusBar.onTap -> alert "status bar tapped !",
+    steroids.statusBar.onTap ->
+      alert "status bar tapped !"
+    ,
       onSuccess: -> alert "on tap event setup!"
