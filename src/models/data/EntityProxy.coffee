@@ -1,7 +1,7 @@
 class EntityProxy
 
 	constructor: (@entity={}) ->
-		console.log "EntityProxy created ->name: #{entity.name}"
+		console.log "EntityProxy created -> name: #{entity.name}"
 
 	notify: (notification={}) ->
 		console.log "entity proxy received notification " + JSON.stringify(notification)
