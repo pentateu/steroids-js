@@ -7,7 +7,7 @@ class SteroidsDataProxy
     # called when a entity is defined in the common
 	@entityDefined: (delegateCallback) ->
 		myCallBack = (entity={}) ->
-    		console.log 'entity defined ... name: #{entity.name}'
+    		console.log "entity defined ... name: #{entity.name}"
 
     		# create a proxy for the entity
     		entityProxy = new EntityProxy(entity)
@@ -19,7 +19,7 @@ class SteroidsDataProxy
 
     # called when an notification happens for an entity
 	@entityNotification: (entity={}, notification={}) ->
-    	console.log 'entity updated ... name: #{entity.name} - notification type: #{notification.type}'
+    	console.log "entity updated ... name: #{entity.name} - notification type: #{notification.type}"
 
     	entityProxy = SteroidsDataProxy.entityStore[entity.name]
 
@@ -29,10 +29,12 @@ class SteroidsDataProxy
     # define a new Entity
   	define: (entity={}, callbacks={}) =>
   		steroids.nativeBridge.nativeCall
-      		method: "steroidsData"
+      		method: "executeOnCommonRuntime"
       		parameters:
-      			method: "define"
-      			entity: entity
+      			name: "steroidsData"
+      			steroidsDataParams:
+      				method: "define"
+      				entity: entity
       		successCallbacks: [SteroidsDataProxy.entityDefined(callbacks.onSuccess)]
       		recurringCallbacks: [SteroidsDataProxy.entityNotification]
       		failureCallbacks: [callbacks.onFailure]

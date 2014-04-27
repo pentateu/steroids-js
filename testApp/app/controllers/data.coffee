@@ -16,22 +16,17 @@ class window.DataController
 
   @testStartSteroidsCommon: ->
 
-    # create obj contact
-    contact = {
-      name: 'John'
-      age: 31
-    }
-
     steroids.data.steroids.define {
       name: 'Contacts'
       fields:
         name: 'string'
         age: 'number'
+        gender: 'string'
     },
-      onSuccess: ->
-        alert "data.steroids.define -> onSuccess "
-      onFailure: ->
-        alert "data.steroids.define -> onFailure "
+      onSuccess: (result) ->
+        alert "data.steroids.define -> onSuccess -> result: #{JSON.stringify(result)} "
+      onFailure: (result) ->
+        alert "data.steroids.define -> onFailure -> result: #{JSON.stringify(result)} "
 
   # PERSISTENCE
 
