@@ -5,9 +5,35 @@ class window.DataController
     # Make Navigation Bar to appear with a custom title text
     steroids.navigationBar.show { title: "data" }
 
+  @testSteroidsCommonSave: ->
+
+    # create obj contact
+    contact = {
+      name: 'John'
+      age: 31
+    }
+
+
+  @testStartSteroidsCommon: ->
+
+    # create obj contact
+    contact = {
+      name: 'John'
+      age: 31
+    }
+
+    steroids.data.steroids.define {
+      name: 'Contacts'
+      fields:
+        name: 'string'
+        age: 'number'
+    },
+      onSuccess: ->
+        alert "data.steroids.define -> onSuccess "
+      onFailure: ->
+        alert "data.steroids.define -> onFailure "
 
   # PERSISTENCE
-
 
   @testPersistenceOverrideNativeSQL: ->
     unless window.sqlitePlugin.openDatabase

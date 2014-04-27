@@ -69,6 +69,10 @@ module.exports = function(grunt) {
             'src/models/File.coffee',
             'src/models/OpenURL.coffee',
             'src/models/Notifications.coffee',
+
+            'src/models/data/EntityProxy.coffee',
+            'src/models/data/SteroidsDataProxy.coffee',
+
             'src/PostMessage.coffee',
             'src/steroids.coffee'
           ]

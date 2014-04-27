@@ -5,6 +5,8 @@ window.steroids =
   Animation: Animation
   File: File
 
+  EntityProxy: EntityProxy
+
   views:
     WebView: WebView
     PreviewFileView: PreviewFileView
@@ -17,6 +19,8 @@ window.steroids =
     TouchDB: TouchDB
     RSS: RSS
     OAuth2: OAuth2
+    # lack of better name
+    steroids: new SteroidsDataProxy
 
   openURL: OpenURL.open
 
