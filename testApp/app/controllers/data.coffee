@@ -5,6 +5,47 @@ class window.DataController
     # Make Navigation Bar to appear with a custom title text
     steroids.navigationBar.show { title: "data" }
 
+
+  @testCommonRuntimeHttpRequestAddToCache: ->
+
+    counter = 0
+
+    sucessFn = (result) ->
+      counter++
+
+      if (counter > 50)
+        counter = 0
+        # clear cache
+        steroids.nativeBridge.nativeCall
+            method: "executeOnCommonRuntime"
+            parameters:
+              module: "commonRuntimeSamples"
+              func: "clearCache"
+            successCallbacks: []
+            failureCallbacks: [errorFn]
+
+      # add the result to the cache
+      steroids.nativeBridge.nativeCall
+          method: "executeOnCommonRuntime"
+          parameters:
+            module: "commonRuntimeSamples"
+            func: "addToCache"
+            key: "cache_key_#{counter}"
+          successCallbacks: []
+          failureCallbacks: [errorFn]
+
+    errorFn = (error) ->
+      alert "Error calling commonRuntime"
+
+    steroids.nativeBridge.nativeCall
+          method: "executeOnCommonRuntime"
+          parameters:
+            module: "commonRuntimeSamples"
+            func: "httpRequest"
+            url: "http://headers.jsontest.com/"
+          successCallbacks: [sucessFn]
+          failureCallbacks: [errorFn]
+
   @testCommonRuntimeHttpRequest: ->
 
     sucessFn = (result) ->
