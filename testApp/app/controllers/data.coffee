@@ -5,6 +5,31 @@ class window.DataController
     # Make Navigation Bar to appear with a custom title text
     steroids.navigationBar.show { title: "data" }
 
+  @testNativeAPIShowStatusBar: ->
+    errorFn = (error) ->
+      alert "Error calling commonRuntime"
+    sucessFn = (result) ->
+      alert "calling native API from within the common runtime works"
+    steroids.nativeBridge.nativeCall
+        method: "executeOnCommonRuntime"
+        parameters:
+          module: "commonRuntimeSamples"
+          func: "nativeAPIShowStatusBar"
+        successCallbacks: [sucessFn]
+        failureCallbacks: [errorFn]
+
+  @testNativeAPIHideStatusBar: ->
+    errorFn = (error) ->
+      alert "Error calling commonRuntime"
+    sucessFn = (result) ->
+      alert "calling native API from within the common runtime works"
+    steroids.nativeBridge.nativeCall
+        method: "executeOnCommonRuntime"
+        parameters:
+          module: "commonRuntimeSamples"
+          func: "nativeAPIHideStatusBar"
+        successCallbacks: [sucessFn]
+        failureCallbacks: [errorFn]
 
   @testCommonRuntimeHttpRequestAddToCache: ->
 
