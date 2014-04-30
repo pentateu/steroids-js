@@ -5,16 +5,24 @@ class window.DataController
     # Make Navigation Bar to appear with a custom title text
     steroids.navigationBar.show { title: "data" }
 
-  @testSteroidsCommonSave: ->
+  @testCommonRuntimeHttpRequest: ->
 
-    # create obj contact
-    contact = {
-      name: 'John'
-      age: 31
-    }
+    sucessFn = (result) ->
+      alert "result from HTTP request: #{JSON.stringify(result)}"
 
+    errorFn = (error) ->
+      alert "Error on HTTP request: #{JSON.stringify(error)}"
 
-  @testStartSteroidsCommon: ->
+    steroids.nativeBridge.nativeCall
+          method: "executeOnCommonRuntime"
+          parameters:
+            module: "commonRuntimeSamples"
+            func: "httpRequest"
+            url: "http://headers.jsontest.com/"
+          successCallbacks: [sucessFn]
+          failureCallbacks: [errorFn]
+
+  @testSteroidsDataDefine: ->
 
     steroids.data.steroids.define {
       name: 'Contacts'
@@ -23,8 +31,42 @@ class window.DataController
         age: 'number'
         gender: 'string'
     },
-      onSuccess: (result) ->
-        alert "data.steroids.define -> onSuccess -> result: #{JSON.stringify(result)} "
+      onSuccess: (entity) ->
+        console.log "data.steroids.define -> onSuccess -> entity: #{JSON.stringify(entity)} "
+
+        # subscribe to events on this entity
+        entity.on "add", (event) ->
+          console.log "entity.on add -> event: #{JSON.stringify(event)} "
+
+        entity.on "update", (event) ->
+          console.log "entity.on update -> event: #{JSON.stringify(event)} "
+
+        entity.on "delete", (event) ->
+          console.log "entity.on delete -> event: #{JSON.stringify(event)} "
+
+
+        # with the entity defined .. lets add some records
+        entity.add
+          name: 'John'
+          age: 31
+          gender: 'male'
+        ,
+          onSuccess: (result) ->
+            console.log "entity.add onSuccess -> result: #{JSON.stringify(result)} "
+          onFailure: (result) ->
+            console.log "entity.add onFailure -> result: #{JSON.stringify(result)} "
+
+        entity.add
+          name: 'Mario'
+          age: 25
+          gender: 'male'
+        ,
+          onSuccess: (result) ->
+            console.log "entity.add onSuccess -> result: #{JSON.stringify(result)} "
+          onFailure: (result) ->
+            console.log "entity.add onFailure -> result: #{JSON.stringify(result)} "
+
+
       onFailure: (result) ->
         alert "data.steroids.define -> onFailure -> result: #{JSON.stringify(result)} "
 

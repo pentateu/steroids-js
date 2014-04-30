@@ -1,29 +1,46 @@
 class EntityProxy
 
 	constructor: (@entity={}) ->
-		console.log "EntityProxy created -> name: #{entity.name}"
+		@events = {}
+		console.log "EntityProxy created -> name: #{@entity.name}"
 
-	notify: (notification={}) ->
-		console.log "entity proxy received notification " + JSON.stringify(notification)
+	on: (eventName, handler) ->
+		console.log "EntityProxy on -> eventName: #{eventName}"
+
+		handlers =  if @events[eventName]?
+			@events[eventName]
+		else
+			[]
+
+		handlers.push handler
+
+		@events[eventName] = handlers
+
+	notify: (event={}) ->
+		console.log "entity proxy received event: #{JSON.stringify(event)}"
+		handlers = @events[event.type]
+		if handlers?
+			for fn in handlers
+				fn(event)
+
+	getAll: (instance, callbacks={}) ->
+		if instance?
+			steroids.nativeBridge.nativeCall
+      			method: "executeOnCommonRuntime"
+      			parameters:
+      				module: "steroidsData"
+      				func: "getAll"
+      			successCallbacks: [callbacks.onSuccess]
+      			failureCallbacks: [callbacks.onFailure]
 
 	add: (instance, callbacks={}) ->
 		if instance?
 			steroids.nativeBridge.nativeCall
-      			method: "steroidsData"
+      			method: "executeOnCommonRuntime"
       			parameters:
-      				method: "add"
-      				entity: entity
+      				module: "steroidsData"
+      				func: "add"
+      				entityName: @entity.name
       				instance: instance
-      			successCallbacks: [callbacks.onSuccess]
-      			failureCallbacks: [callbacks.onFailure]
-
-
-    getAll: (instance, callbacks={}) ->
-		if instance?
-			steroids.nativeBridge.nativeCall
-      			method: "steroidsData"
-      			parameters:
-      				method: "getAll"
-      				entity: entity
       			successCallbacks: [callbacks.onSuccess]
       			failureCallbacks: [callbacks.onFailure]

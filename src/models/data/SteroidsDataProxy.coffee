@@ -5,9 +5,9 @@ class SteroidsDataProxy
 	@entityStore = {}
 
     # called when a entity is defined in the common
-	@entityDefined: (delegateCallback) ->
-		myCallBack = (entity={}) ->
-    		console.log "entity defined ... name: #{entity.name}"
+	@entityDefined: (entity, delegateCallback) ->
+		myCallBack = (result={}) ->
+    		console.log "entity defined ... name: #{result.entityName}"
 
     		# create a proxy for the entity
     		entityProxy = new EntityProxy(entity)
@@ -18,23 +18,22 @@ class SteroidsDataProxy
     		delegateCallback(entityProxy)
 
     # called when an notification happens for an entity
-	@entityNotification: (entity={}, notification={}) ->
-    	console.log "entity updated ... name: #{entity.name} - notification type: #{notification.type}"
+	@entityNotification: (event={}) ->
+    	console.log "entity event ... event: #{JSON.stringify(event)}"
 
-    	entityProxy = SteroidsDataProxy.entityStore[entity.name]
+    	entityProxy = SteroidsDataProxy.entityStore[event.entityName]
 
     	if entityProxy?
-    		entityProxy.notify(notification);
+    		entityProxy.notify(event);
 
     # define a new Entity
   	define: (entity={}, callbacks={}) =>
   		steroids.nativeBridge.nativeCall
       		method: "executeOnCommonRuntime"
       		parameters:
-      			name: "steroidsData"
-      			steroidsDataParams:
-      				method: "define"
-      				entity: entity
-      		successCallbacks: [SteroidsDataProxy.entityDefined(callbacks.onSuccess)]
+      			module: "steroidsData"
+      			func: "define"
+      			entity: entity
+      		successCallbacks: [SteroidsDataProxy.entityDefined(entity, callbacks.onSuccess)]
       		recurringCallbacks: [SteroidsDataProxy.entityNotification]
       		failureCallbacks: [callbacks.onFailure]
