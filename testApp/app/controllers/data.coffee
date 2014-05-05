@@ -5,6 +5,19 @@ class window.DataController
     # Make Navigation Bar to appear with a custom title text
     steroids.navigationBar.show { title: "data" }
 
+  @testTimer: ->
+    recurringFn = (result) ->
+      console.log "recurringFn timer tick"
+    sucessFn = (result) ->
+      alert "calling native API from within the common runtime works"
+    steroids.nativeBridge.nativeCall
+        method: "executeOnCommonRuntime"
+        parameters:
+          module: "commonRuntimeSamples"
+          func: "testTimer"
+        successCallbacks: [sucessFn]
+        recurringCallbacks: [recurringFn]
+
   @testNativeAPIShowStatusBar: ->
     errorFn = (error) ->
       alert "Error calling commonRuntime"
