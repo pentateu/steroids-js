@@ -1,20 +1,24 @@
 class window.DrawersController
   @leftDrawer: new steroids.views.WebView
-    location: "/views/drawers/leftDrawer.html"
+    location: "views/drawers/leftDrawer.html"
     id: "leftDrawer"
 
   @rightDrawer: new steroids.views.WebView
-    location: "/views/drawers/rightDrawer.html"
+    location: "views/drawers/rightDrawer.html"
     id: "rightDrawer"
 
   @center1: new steroids.views.WebView {
-    location: "/views/drawers/index.html"
+    location: "views/drawers/index.html"
     id: "center1"
   }
 
   @center2: new steroids.views.WebView {
-    location: "/views/drawers/index2.html"
+    location: "views/drawers/index2.html"
     id: "center2"
+  }
+
+  @modal: new steroids.views.WebView {
+    location: "views/modal/modalWithNavBar.html"
   }
 
   # always put everything inside PhoneGap deviceready
@@ -73,6 +77,14 @@ class window.DrawersController
       buttons:
         right: [rightDrawerBtn]
 
+  @testShow: ->
+    success = ->
+      console.log "SUCCESS"
+
+    steroids.drawers.show {}, {
+      onSuccess: success
+    }
+
   @testShowLeft: ->
     success = ->
       console.log "SUCCESS"
@@ -91,6 +103,54 @@ class window.DrawersController
     ,
       onSuccess: success
 
+  @testShowNonPreloadedDrawerRight: ->
+    success = ->
+      alert "SUCCESS"
+    failure = ->
+      alert "FAILED"
+
+    newDrawer = new steroids.views.WebView("views/drawers/extraDrawer.html")
+
+    steroids.drawers.update
+      right: newDrawer
+    ,
+      onSuccess: success
+      onFailure: failure
+
+  @testShowNonPreloadedDrawerWithIdRight: ->
+    success = ->
+      alert "SUCCESS"
+    failure = ->
+      alert "FAILED"
+
+    newDrawer = new steroids.views.WebView
+      location: "views/drawers/extraDrawer.html"
+      id: "extraDrawer"
+
+    steroids.drawers.update
+      right: newDrawer
+    ,
+      onSuccess: success
+      onFailure: failure
+
+  @testShowPreloadedDrawerRight: ->
+    success = ->
+      alert "SUCCESS"
+    failure = ->
+      alert "FAILED"
+
+    newDrawer = new steroids.views.WebView("views/drawers/extraDrawer.html")
+
+    newDrawer.preload {},
+    {
+      onSuccess: =>
+        steroids.drawers.update
+          right: newDrawer
+        ,
+          onSuccess: success
+          onFailure: failure
+    }
+
   @testHide: ->
     success = ->
       console.log "SUCCESS"
@@ -103,8 +163,8 @@ class window.DrawersController
     success = ->
       console.log "SUCCESS"
 
+    # fullChange is set automatically to true if center param is used
     steroids.drawers.hide {
-      fullChange: true
       center: DrawersController.center1
     }, {
       onSuccess: success
@@ -115,8 +175,8 @@ class window.DrawersController
       console.log "SUCCESS"
 
     steroids.drawers.hide
-      fullChange: true
       center: DrawersController.center2
+      fullChange: false # overridden if center param is defined
 
   @testEnableAllGestures: ->
     success = ->
@@ -130,7 +190,27 @@ class window.DrawersController
       onSuccess: success
     }
 
-  @testDisableGesture: ->
+  @testLegacyEnableGesture: ->
+
+    googleView = new steroids.views.WebView("http://www.google.com")
+    googleView.preload {},
+    {
+      onSuccess: =>
+        steroids.drawers.enableGesture
+          view: googleView
+          edge: steroids.screen.edges.LEFT
+          widthOfDrawerInPixels: 200
+    }
+
+  @testLegacyEnableGestureShorthand: ->
+    appleView = new steroids.views.WebView("http://www.apple.com")
+    appleView.preload {},
+    {
+      onSuccess: =>
+        steroids.drawers.enableGesture(appleView)
+    }
+
+  @testDisableGestureViaUpdate: ->
     success = ->
       console.log "SUCCESS"
 
@@ -143,6 +223,13 @@ class window.DrawersController
     }, {
       onSuccess: success
     }
+
+  @testLegacyDisableGesture: ->
+    success = ->
+      console.log "SUCCESS"
+
+    steroids.drawers.disableGesture
+      onSuccess: success
 
   @testUpdateWithWidthOfLayerInPixels: ->
     success = ->
@@ -202,7 +289,7 @@ class window.DrawersController
         showShadow: true
         openGestures: ["PanBezelCenterView"]
         closeGestures: ["PanCenterView", "PanDrawerView"]
-        strechDrawer: true
+        stretchDrawer: true
     ,
       onSuccess: success
 
@@ -245,24 +332,60 @@ class window.DrawersController
       onSuccess: success
     }
 
-  @testShowLeftWithFullParams: ->
-    success = ->
-      console.log "SUCCESS"
-
-    steroids.drawers.show {
-      edge: steroids.screen.edges.LEFT
-      options:
-        showShadow: true
-        openGestures: ["PanCenterView"]
-        closeGestures: ["PanCenterView", "PanDrawerView"]
-        strechDrawer: true
-        centerViewInteractionMode: "Full"
-    }, {
-      onSuccess: success
-    }
-
   @testReplaceLayers: ->
     steroids.layers.replace DrawersController.center2
+
+  @testShowModal: ->
+
+    steroids.modal.show(
+      {
+        view: DrawersController.modal
+      }
+      {
+        onSuccess: ->
+          steroids.logger.log "Modal shown!"
+        onFailure: ->
+          steroids.logger.log "Could not show modal!"
+      }
+    )
+
+  #event tests
+
+  @testWillShowChangeEvent: ->
+    eventHandler = steroids.drawers.on 'willshow', (event) ->
+      alert "willshow event -> eventName: #{event.name} drawer.edge: #{event.drawer.edge}"
+
+    alert "event listener added"
+
+  @testDidShowChangeEvent: ->
+    eventHandler = steroids.drawers.on 'didshow', (event) ->
+      alert "didshow event -> eventName: #{event.name} drawer.edge: #{event.drawer.edge}"
+
+    alert "event listener added"
+
+  @testWillCloseChangeEvent: ->
+    eventHandler = steroids.drawers.on 'willclose', (event) ->
+      alert "willclose event -> eventName: #{event.name} drawer.edge: #{event.drawer.edge}"
+
+    alert "event listener added"
+
+  @testDidCloseChangeEvent: ->
+    eventHandler = steroids.drawers.on 'didclose', (event) ->
+      alert "didclose event -> eventName: #{event.name} drawer.edge: #{event.drawer.edge}"
+
+    alert "event listener added"
+
+  @testRemoveShowEvents: ->
+    steroids.drawers.off 'willshow'
+    steroids.drawers.off 'didshow'
+
+    alert "show events handlers removed"
+
+  @testRemoveCloseEvents: ->
+    steroids.drawers.off 'willclose'
+    steroids.drawers.off 'didclose'
+
+    alert "close events handlers removed"
 
   @testTryToReusePreloadedAsModal: ->
     success = ->

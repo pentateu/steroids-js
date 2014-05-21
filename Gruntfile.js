@@ -38,6 +38,7 @@ module.exports = function(grunt) {
             'src/bridges/WebBridge.coffee',
             'src/bridges/WebsocketBridge.coffee',
             'src/bridges/TizenBridge.coffee',
+            'src/bridges/JSCoreBridge.coffee',
             'src/Events.coffee',
             'src/models/EventsSupport.coffee',
             'src/models/device/Torch.coffee',
@@ -69,10 +70,9 @@ module.exports = function(grunt) {
             'src/models/File.coffee',
             'src/models/OpenURL.coffee',
             'src/models/Notifications.coffee',
-
             'src/models/data/EntityProxy.coffee',
             'src/models/data/SteroidsDataProxy.coffee',
-
+            'src/models/InitialView.coffee',
             'src/PostMessage.coffee',
             'src/steroids.coffee'
           ]

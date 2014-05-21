@@ -1,4 +1,4 @@
-class WebView
+class WebView extends EventsSupport
 
   params: {}
   id: null
@@ -8,6 +8,10 @@ class WebView
   navigationBar: new NavigationBar
 
   constructor: (options={})->
+
+    #setup the events support
+    super "webview", ["created", "preloaded", "unloaded"]
+
     @location = if options.constructor.name == "String"
       options
     else
@@ -21,10 +25,13 @@ class WebView
         @location = "#{window.location.protocol}//#{window.location.host}/#{@location}"
 
     @params = @getParams()
-    # Having the Portrait orientation allow for the
-    # webview to go back to Portrait when rotated by another view
-    # e.g when doing video playback
-    @setAllowedRotations([0])
+
+    # Sets the WebView to rotate to portait orientation only by default.
+    # User can override this behavior by setting window.AG_allowedRotationsDefaults
+    # before loading Steroids.js.
+
+    allowedRotations = window.AG_allowedRotationsDefaults ? [0]
+    @setAllowedRotations(allowedRotations)
 
 
   preload: (options={}, callbacks={}) ->
@@ -85,6 +92,9 @@ class WebView
     else
       options.allowedRotations
 
+    if not @allowedRotations? or @allowedRotations.length == 0
+      @allowedRotations = [0]
+
     window.shouldRotateToOrientation = (orientation) =>
       return if orientation in @allowedRotations
         true
@@ -93,16 +103,29 @@ class WebView
 
     callbacks.onSuccess?.call()
 
+  mapDegreesToOrientations: (degrees) ->
+    if degrees == 0 or degrees == "0"
+      "portrait"
+    else if degrees == 180 or degrees == "180"
+      "portraitupsidedown"
+    else if degrees == -90 or degrees == "-90"
+      "landscapeleft"
+    else if degrees == 90 or degrees == "90"
+      "landscaperight"
+
+  # Deprecated. should use steroids.screen.rotate() instead.
   rotateTo: (options={}, callbacks={}) ->
-    degrees = if options.constructor.name == "String"
+    degrees = if options.constructor.name == "String" or options.constructor.name == "Number"
       options
     else
       options.degrees
 
+    orientation = @mapDegreesToOrientations degrees
+
     steroids.nativeBridge.nativeCall
-      method: "rotateTo"
+      method: "setOrientation"
       parameters:
-        orientation: degrees
+        orientation: orientation
       successCallbacks: [callbacks.onSuccess]
       failureCallbacks: [callbacks.onFailure]
 

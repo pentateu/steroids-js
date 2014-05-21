@@ -1,6 +1,9 @@
-class DrawerCollection
+class DrawerCollection extends EventsSupport
 
   constructor: ->
+    #setup the events support
+    super "drawer", ["willshow", "didshow", "willclose", "didclose"]
+
     @defaultAnimations = {
       SLIDE: new Animation({
         transition: "slide"
@@ -29,13 +32,14 @@ class DrawerCollection
       fullChange: false
     }
 
-    # false -> close the drawer from where the drawer is
-    # true -> fully extends the drawer before closing it .. that allows for the center view to be changed
+    # false -> close the drawer from where the drawer is.
+    # true -> fully extend the drawer before closing it. This allows the center view to be changed while it is hidden.
     if options.fullChange?
       parameters.fullChange = options.fullChange
 
-    # when fullChange = true specify a webview to be replaced in the center
+    # when center is defined, force fullChange:true
     if options.center?
+      parameters.fullChange = true
       DrawerCollection.applyViewOptions options.center, parameters.center
 
     steroids.nativeBridge.nativeCall
@@ -47,24 +51,8 @@ class DrawerCollection
   show: (options={}, callbacks={}) ->
     steroids.debug "steroids.drawers.show called"
 
-    parameters = {
-      edge: steroids.screen.edges.LEFT
-      left:{}
-      right:{}
-      options:{}
-    }
-
-    if options.left?
-      DrawerCollection.applyViewOptions options.left, parameters.left
-
-    if options.right?
-      DrawerCollection.applyViewOptions options.right, parameters.right
-
-    if options.options?
-      DrawerCollection.applyDrawerSettings options.options, parameters.options
-
-    if options.edge?
-      parameters.edge = options.edge
+    parameters =
+      edge: options.edge || steroids.screen.edges.LEFT
 
     steroids.nativeBridge.nativeCall
       method: "openDrawer"
@@ -96,13 +84,52 @@ class DrawerCollection
       successCallbacks: [callbacks.onSuccess]
       failureCallbacks: [callbacks.onFailure]
 
+  # DEPRECATED, legacy support only
   disableGesture: (options={}, callbacks={}) ->
     steroids.debug "steroids.drawers.disableGesture called"
 
-    parameters = {
-      openGestures: "None"
-      closeGestures: "None"
-    }
+    parameters =
+      options:
+        openGestures: ["None"]
+        closeGestures: ["None"]
+
+    steroids.nativeBridge.nativeCall
+      method: "updateDrawer"
+      parameters: parameters
+      successCallbacks: [callbacks.onSuccess]
+      failureCallbacks: [callbacks.onFailure]
+
+  # DEPRECATED, legacy support only
+  enableGesture: (options={}, callbacks={}) ->
+    steroids.debug "steroids.drawers.enableGesture called"
+
+    parameters =
+      left: {}
+      right: {}
+      options: {}
+
+    # support shorthand of passing just WebView
+    if options.constructor.name == "WebView"
+      options =
+        view: options
+
+    if options.keepLoading?
+      options.view.keepLoading = options.keepLoading
+
+    if options.widthOfDrawerInPixels?
+      options.view.widthOfDrawerInPixels = options.widthOfDrawerInPixels
+    else if options.widthOfLayerInPixels?
+      parameters.options.widthOfLayerInPixels = options.widthOfLayerInPixels
+
+    edge = options.edge || steroids.screen.edges.LEFT
+
+    if edge is steroids.screen.edges.RIGHT
+      DrawerCollection.applyViewOptions options.view, parameters.right
+    else # default to left edge
+      DrawerCollection.applyViewOptions options.view, parameters.left
+
+    parameters.options.openGestures = ["PanNavBar", "PanCenterView"]
+    parameters.options.closeGestures = ["PanNavBar", "PanCenterView", "TapNavBar", "TapCenterView", "PanDrawerView"]
 
     steroids.nativeBridge.nativeCall
       method: "updateDrawer"
@@ -154,8 +181,8 @@ class DrawerCollection
 
     # By default, the side drawer will stretch if the user pans past the maximum drawer width. This gives a playful stretch effect.
     # You can disable this by setting strechDrawer to false
-    if options.strechDrawer?
-      parameters.strechDrawer = options.strechDrawer
+    if options.stretchDrawer?
+      parameters.strechDrawer = options.stretchDrawer
 
     # None -> The user can not interact with any content in the center view.
     # Full -> The user can interact with all content in the center view.

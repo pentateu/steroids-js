@@ -44,6 +44,16 @@ steroids.config.tabBar.tabs = [
   }
 ]
 
+steroids.config.preloads = [
+  {
+    id: "preloadedViaPreloadsArray"
+    location: "http://localhost/views/webview/preloadedViaPreloadsArray.html"
+  }
+]
+
+steroids.config.initialView =
+  id: "initialView"
+  location: "http://localhost/views/initview/index.html"
 
 
 # -- Status bar --
@@ -62,6 +72,9 @@ steroids.config.statusBar.enabled = Math.random() > 0.5
 
 # steroids.config.navigationBar.buttonTintColor = ""
 # steroids.config.navigationBar.buttonTitleColor = ""
+
+steroids.config.navigationBar.borderSize = 4
+steroids.config.navigationBar.borderColor = "#aef"
 
 # steroids.config.tabBar.tintColor = ""
 # steroids.config.tabBar.tabTitleColor = ""
