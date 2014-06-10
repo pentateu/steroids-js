@@ -170,6 +170,20 @@ class window.DrawersController
       onSuccess: success
     }
 
+  @testHideWithFullChangeCenter2NotPreloaded: ->
+    success = ->
+      console.log "SUCCESS - center replaced by a non preloaded webview"
+
+    failure = ->
+      console.log "ERROR - could not replace center with a non preloaded webview"
+
+    steroids.drawers.hide
+      center: new steroids.views.WebView
+        location: "views/drawers/index2.html"
+    ,
+      onSuccess: success
+      onFailure: failure
+
   @testHideWithFullChangeCenter2: ->
     success = ->
       console.log "SUCCESS"
