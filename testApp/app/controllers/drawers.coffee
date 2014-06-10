@@ -177,7 +177,7 @@ class window.DrawersController
   @testHide: ->
     success = ->
       steroids.logger.log "SUCCESS in hiding the drawer"
-    failure = -> 
+    failure = ->
       steroids.logger.log "FAILURE in testHide"
 
     steroids.drawers.hide {}, {
@@ -215,7 +215,21 @@ class window.DrawersController
       onFailure: failure
     }
 
-  @testHideWithCenter2: ->
+  @testHideWithFullChangeCenter2NotPreloaded: ->
+    success = ->
+      console.log "SUCCESS - center replaced by a non preloaded webview"
+
+    failure = ->
+      console.log "ERROR - could not replace center with a non preloaded webview"
+
+    steroids.drawers.hide
+      center: new steroids.views.WebView
+        location: "views/drawers/index2.html"
+    ,
+      onSuccess: success
+      onFailure: failure
+
+  @testHideWithFullChangeCenter2: ->
     success = ->
       steroids.logger.log "SUCCESS in hiding the drawer and showing center 2"
     failure = ->
@@ -342,7 +356,7 @@ class window.DrawersController
       left:
         widthOfDrawerInPixels: 280
       right:
-        widthOfDrawerInPixels: 280 
+        widthOfDrawerInPixels: 280
     }, {
       onSuccess: success
       onFailure: failure
@@ -390,7 +404,7 @@ class window.DrawersController
       left:
         widthOfDrawerInPixels: 150
       right:
-        widthOfDrawerInPixels: 150 
+        widthOfDrawerInPixels: 150
     }, {
       onSuccess: success
       onFailure: failure
@@ -535,4 +549,3 @@ class window.DrawersController
         onFailure: -> alert "FAILURE in testPushLayer"
       }
     )
-
