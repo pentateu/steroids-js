@@ -1,6 +1,18 @@
 ## 3.5.? (TBD)
 
 Features:
+- PreviewFileView now supports remote URLs
+- new API to display a media gallery:
+mediaGallery = new steroids.views.MediaGalleryView {
+  files: [...]
+}
+steroids.modal.show {
+  view: mediaGallery
+}
+
+## 3.5.? (TBD)
+
+Features:
 - Support for new Navivation Bar API and navigation parameters when creating web views programmatically or in the configuration.
 
 ## 3.5.12 (2015-06-23)
